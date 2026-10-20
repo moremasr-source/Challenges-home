@@ -3,7 +3,7 @@ const CATS={cook:['🍳','الطبخ'],tidy:['🧹','النظام'],read:['📚'
 const BADGES={cook:'الشيف الصغير',tidy:'حارس النظام',read:'الباحث الصغير',faith:'القلب الحاضر',fit:'الفارس النشيط',fam:'سند العائلة',explore:'عين الصقر',money:'صاحب الحصّالة'};
 const TIERS=[3,7,12],TN=['برونزية','فضية','ذهبية'],LV=[[0,'مستكشف','🧭'],[150,'مغامر','⛺'],[400,'رحّالة','🗺️'],[800,'قائد','🏅']];
 const ADVS=['الحديقة الكبرى','الشاطئ وقت الغروب','المتحف','السوق القديم','محمية طبيعية'],AV=['👧','👦','🧒','👶'];
-let S=null,mode='auth',tab='home',at='in',ob='pick',LB=null,lsub='pub',lq='',lcat='',lt='all',ed=null;
+let S=null,mode='auth',tab='home',at='in',ob='pick',LB=null,lsub='pub',lq='',lcat='',lt='all',ed=null,CS=null,FR=null,FQ=null,csub='ch',cf={},sel=new Set(),selM=new Set(),ADD=(typeof location!=='undefined'&&new URLSearchParams(location.search).get('add'))||null;
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const v=i=>$(i).value.trim(),ci=c=>CATS[c]||CATS.tidy,kt=()=>localStorage.getItem('kt');
 function toast(m){const d=document.createElement('div');d.className='toast';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2800)}
@@ -14,7 +14,7 @@ const kact=(fn,p,msg)=>act(fn,{token:kt(),...p},msg);
 async function refresh(){S=await api(mode==='kid'?'kid_state':'app_state',mode==='kid'?{token:kt()}:{});render()}
 async function boot(){
  try{const {data}=await sb.auth.getSession();
-  if(data.session){S=await api('app_state');if(!S.person){mode='adult';return onbView()}mode='adult';tab='home';return render()}
+  if(data.session){S=await api('app_state');if(!S.person){mode='adult';return onbView()}mode='adult';tab='home';if(ADD){try{[FQ,FR]=await Promise.all([api('friend_preview',{code:ADD}),api('friends_state')]);selM=new Set();return reqV()}catch(e){fail(e);clrAdd()}}return render()}
   if(kt()){try{mode='kid';S=await api('kid_state',{token:kt()});tab='tasks';return render()}catch(e){localStorage.removeItem('kt')}}
   mode='auth';authView()}catch(e){fail(e);mode='auth';authView()}}
 function shell(on){$('nav').innerHTML='';$('out').style.display=on?'':'none';$('fam').textContent=on&&S&&S.family?S.family.name:''}
@@ -22,7 +22,7 @@ async function logout(){localStorage.removeItem('kt');await sb.auth.signOut();S=
 /* ===== الدخول ===== */
 const TABS=(a,l)=>`<div class="tabs">${l.map(x=>`<button class="${a===x[0]?'on':''}" onclick="setAt('${x[0]}')">${x[1]}</button>`).join('')}</div>`;
 const setAt=x=>{at=x;authView()};
-function authView(){shell(0);const em=`<input id="em" type="email" placeholder="البريد الإلكتروني" autocomplete="email"><input id="pw" type="password" placeholder="كلمة المرور (6 أحرف فأكثر)" autocomplete="current-password">`;
+function authView(){shell(0);const em=(ADD?'<div class="note">سجّل الدخول أو أنشئ حسابًا لإكمال دعوة الصداقة 🤝</div>':'')+`<input id="em" type="email" placeholder="البريد الإلكتروني" autocomplete="email"><input id="pw" type="password" placeholder="كلمة المرور (6 أحرف فأكثر)" autocomplete="current-password">`;
  $('view').innerHTML=TABS(at,[['in','دخول'],['kid','دخول الابن'],['new','حساب جديد']])+(at==='kid'?`<div class="card"><div class="note">اسم المستخدم وكلمة المرور أنشأهما لك أبوك أو أمك.</div><input id="ku" placeholder="اسم المستخدم" autocapitalize="none" autocomplete="username"><input id="kp" type="password" placeholder="كلمة المرور" autocomplete="current-password"><button class="btn sun" style="width:100%;margin-top:6px" onclick="kidLogin()">ادخل مغامرتك 🚀</button></div>`:`<div class="card">${em}<button class="btn ${at==='new'?'sun':''}" style="width:100%;margin-top:6px" onclick="${at==='new'?'signup':'login'}()">${at==='new'?'إنشاء حساب':'دخول'}</button></div>${at==='new'?'<div class="mute">بعد التسجيل تختار: حساب شخصي أو عائلي، أو الانضمام لعائلة برمز دعوة.</div>':''}`)}
 async function login(){const r=await sb.auth.signInWithPassword({email:v('em'),password:v('pw')});if(r.error)return fail(r.error);return boot()}
 async function signup(){const r=await sb.auth.signUp({email:v('em'),password:v('pw')});if(r.error)return fail(r.error);if(r.data.session)return boot();toast('تحقق من بريدك لتأكيد الحساب')}
@@ -41,12 +41,12 @@ const kids=()=>S.members.filter(m=>m.role==='child'),mem=id=>S.members.find(m=>m
 const tier=n=>TIERS.filter(t=>n>=t).length,cnt=(m,c)=>(m.cats||{})[c]||0;
 const bal=m=>m.xp-m.spent;
 function lvl(x){let i=0;LV.forEach((l,j)=>{if(x>=l[0])i=j});const n=LV[i+1];return{i,name:LV[i][1],ic:LV[i][2],next:n,pct:n?Math.round((x-LV[i][0])/(n[0]-LV[i][0])*100):100}}
-async function go(t){tab=t;if(t==='lib'||t==='adm')await loadLib();render()}
+async function go(t){tab=t;if(t==='lib'||t==='adm')await loadLib();if(t==='comp')await loadComp();render()}
 function render(){
  const g=mode==='adult'&&S.person.role==='guardian',kd=mode==='kid';
- const L=kd?[['tasks','✅','مهامي'],['badges','🎖️','شاراتي'],['store','🎁','المتجر'],['team','👨‍👩‍👧','الفريق']]
-  :g?[['home','🏠','الرئيسية'],['tasks','✅','المهام'],['lib','📚','المكتبة'],['badges','🎖️','الشارات'],['store','🎁','المتجر'],['fam','👨‍👩‍👧','العائلة']]
-  :[['home','🏠','الرئيسية'],['tasks','✅','المهام'],['lib','📚','المكتبة'],['badges','🎖️','الشارات']];
+ const L=kd?[['tasks','✅','مهامي'],['comp','🏆','التحديات'],['badges','🎖️','شاراتي'],['store','🎁','المتجر'],['team','👨‍👩‍👧','الفريق']]
+  :g?[['home','🏠','الرئيسية'],['tasks','✅','المهام'],['lib','📚','المكتبة'],['comp','🏆','المنافسة'],['store','🎁','المتجر'],['fam','👨‍👩‍👧','العائلة']]
+  :[['home','🏠','الرئيسية'],['tasks','✅','المهام'],['lib','📚','المكتبة'],['comp','🏆','المنافسة']];
  if(!kd&&S.admin)L.push(['adm','🛡️','مراجعة']);
  if(!L.find(x=>x[0]===tab))tab=L[0][0];shell(1);
  $('nav').innerHTML=L.map(x=>`<button class="${tab===x[0]?'on':''}" onclick="go('${x[0]}')"><span>${x[1]}</span>${x[2]}</button>`).join('');
@@ -63,9 +63,10 @@ function catSort(m){const o=[];Object.keys(CATS).forEach(c=>{const a=m.filter(t=
 const prog=t=>t.target?`<div class="bar" style="margin:4px 0"><i style="width:${Math.min(100,Math.round(t.progress/t.target*100))}%"></i></div><div class="mute">${t.progress}/${t.target} ${esc(t.unit||'')}</div>`:'';
 function ordersBox(){const p=(S.orders||[]).filter(o=>o.status==='pending');return `<h2>🎁 طلبات المتجر ${p.length?`<span class="pill">${p.length}</span>`:''}</h2>`+(p.length?p.map(o=>`<div class="card"><div class="row"><div class="ico">${esc(o.icon||'🎁')}</div><div class="grow"><h3>${esc(o.item_title)}</h3><div class="mute">${kn(o.person_id)} • ${o.cost} نقطة</div></div></div><div class="row" style="margin-top:10px"><button class="btn" onclick="ordSet('${o.id}','ok')">✔ موافقة</button><button class="btn ghost" onclick="ordSet('${o.id}','no')">رفض وإرجاع النقاط</button></div></div>`).join(''):'<div class="card mute">لا طلبات جوائز الآن</div>')}
 /* ===== شاشة الكبار ===== */
-function adultV(g){
+function adultV(g){if(tab==='home'){const h=adultV0(g);tab='badges';const r=adultV0(g);tab='home';return h+r}return adultV0(g)}
+function adultV0(g){
  const targets=g?kidsOf():[S.person];
- if(tab==='lib')return libV(g);if(tab==='adm')return admV();
+ if(tab==='lib')return libV(g);if(tab==='adm')return admV();if(tab==='comp')return compV();
  if(tab==='home'){const p=S.tasks.filter(t=>t.status==='pending'&&t.person_id!==S.person.id||(t.status==='pending'&&!g));
   if(!g)return card(S.person,1)+`<h2>مهامي</h2>`+(S.tasks.filter(t=>t.status!=='done').map(t=>taskRowSelf(t)).join('')||'<div class="card mute">لا مهام الآن. أضف من تبويب المهام.</div>');
   return (targets.length?targets.map(k=>card(k,1)).join(''):`<div class="card"><h3>أهلًا بك 👋</h3><div class="mute" style="margin-top:4px">ابدأ بإنشاء حساب لابنك من تبويب «العائلة».</div></div>`)
@@ -80,6 +81,7 @@ function taskRowSelf(t){return `<div class="card row"><button class="chk ${t.sta
 /* ===== شاشة الابن ===== */
 function kidV(){const K=S.person;
  if(tab==='tasks'){const m=S.tasks;return card(K,1)+`<div class="card row sp"><span>رصيدك للمتجر</span><span class="pill">⭐ ${bal(K)}</span></div><h2>مهام اليوم</h2>`+(m.length?catSort(m).map(t=>t.hdr?`<h3 style="margin:12px 0 6px">${t.hdr}</h3>`:`<div class="card task ${t.status==='done'?'done':''}"><div class="row"><button class="chk ${t.status==='pending'?'p':t.status==='done'?'d':''}" ${t.status!=='todo'||t.target?'disabled':''} onclick="fin('${t.id}')" aria-label="خلصت">${t.status==='todo'?'':t.status==='pending'?'⏳':'✓'}</button><div class="grow"><h3>${esc(t.title)}</h3><div class="mute">${t.status==='pending'?'بانتظار اعتماد أبيك':t.status==='done'?'معتمدة ✔':t.target?'سجّل تقدمك':'اضغط الدائرة عند الانتهاء'}</div></div><span class="pill">+${t.xp}</span></div>${prog(t)}${t.target&&t.status==='todo'?`<div class="row" style="margin-top:6px">${[1,5,10].map(n=>`<button class="btn ghost sm" onclick="kprog('${t.id}',${n})">+${n}</button>`).join('')}</div>`:''}</div>`).join(''):'<div class="card mute">لا مهام الآن، اطلب من أبيك مهمة!</div>')}
+ if(tab==='comp')return `<h2>🏆 تحدياتي</h2>`+(!CS?'<div class="card mute">جارٍ التحميل…</div>':CS.items.length?CS.items.map(c=>chCard(c,K.id)).join(''):'<div class="card mute">لا تحديات الآن. اطلب من أبيك أن ينشئ تحديًا مع أصدقائك!</div>');
  if(tab==='badges')return `<h2>🎖️ شاراتي</h2><div class="note">لكل شارة 3 مستويات. أنجز مهامها لتفتحها.</div>`+badgeGrid([K]);
  if(tab==='store')return `<div class="card hero row sp"><span>رصيدك</span><b style="font-size:28px">⭐ ${bal(K)}</b></div><h2>🎁 اصرف نقاطك</h2>`+S.store.map(s=>`<div class="card row"><div class="ico">${esc(s.icon)}</div><div class="grow"><h3>${esc(s.title)}</h3><div class="mute">${s.cost} نقطة</div></div><button class="btn sun" ${bal(K)<s.cost?'disabled':''} onclick="buy('${s.id}')">اطلب</button></div>`).join('')+(S.orders.length?`<h2>طلباتي</h2>`+S.orders.map(o=>`<div class="card row sp"><span>${esc(o.icon||'🎁')} ${esc(o.item_title)}</span><span class="pill ${o.status==='ok'?'g':'w'}">${o.status==='pending'?'بانتظار أبيك ⏳':o.status==='ok'?'تمت الموافقة ✔':'رُفض وأُعيدت نقاطك'}</span></div>`).join(''):'');
  const d=Date.now(),wk=(a,b)=>S.tasks.filter(t=>t.status==='done'&&t.done_at&&d-new Date(t.done_at)<b*864e5&&d-new Date(t.done_at)>=a*864e5).length;
@@ -134,5 +136,36 @@ async function lSave(){const items=parseItems($('fi').value);const p={id:ed.id,t
 const lApply=id=>{const ids=tgtIds();if(!ids.length)return toast('أنشئ حساب ابن أولًا من تبويب العائلة');return act('list_apply',{id,person_ids:ids},'أُضيفت مهام القائمة ✔')};
 const lCopy=(id,to)=>lact('list_copy',{id,to},to==='family'?'نُسخت إلى مكتبة العائلة ✔':'نُسخت إلى قوائمك ✔');
 const lDel=id=>lact('list_del',{id},'حُذفت القائمة'),lPub=id=>lact('list_publish',{id},'أُرسلت للمراجعة، وتظهر للجميع بعد القبول'),lRev=(id,s)=>lact('admin_review',{id,status:s},s==='approved'?'قُبلت القائمة':'رُفضت القائمة');
+
+/* ===== الأصدقاء والتحديات ===== */
+const base=()=>typeof location!=='undefined'?location.origin+location.pathname:'https://YOUR-SITE/';
+async function loadComp(){try{if(mode==='kid')CS=await api('kid_challenges',{token:kt()});else{const r=await Promise.all([api('challenges_state'),api('friends_state')]);CS=r[0];FR=r[1]}}catch(e){fail(e)}}
+const unitOf=c=>c.metric==='xp'?'نقطة':c.metric==='tasks'?'مهمة':esc(c.unit||'');
+function board(c,me){const mx=Math.max(1,...c.board.map(b=>b.score));return c.board.length?c.board.map((b,i)=>`<div style="margin:6px 0"><div class="row sp"><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(b.emoji)} <b>${esc(b.name)}</b> <span class="mute">${esc(b.label||'')}</span></span><span class="pill ${b.id===me?'g':'w'}">${b.score} ${unitOf(c)}</span></div><div class="bar"><i style="width:${Math.round(b.score/mx*100)}%"></i></div></div>`).join(''):'<div class="mute">تظهر القائمة بعد انضمام المشاركين</div>'}
+function chCard(c,me){const left=Math.ceil((new Date(c.end_at)-Date.now())/864e5),inv=c.mine.filter(m=>m.status==='invited'),mt=c.metric==='count'?'القياس: '+esc(c.unit):c.metric==='xp'?'القياس: النقاط':'القياس: عدد المهام';
+ return `<div class="card"><div class="row sp"><h3>🏆 ${esc(c.title)}</h3><span class="pill ${c.active?'':'w'}">${c.active?'باقي '+Math.max(0,left)+' يوم':'انتهى'}</span></div><div class="mute">${mt}${c.cat?' • '+ci(c.cat)[1]:''} • من «${esc(c.creator)}»</div>${inv.map(m=>`<div class="note row sp" style="margin-top:8px"><span>دعوة لـ ${esc(m.name)}</span><span class="row"><button class="btn sm" onclick="chResp('${c.id}','${m.person_id}',true)">قبول</button><button class="btn ghost sm" onclick="chResp('${c.id}','${m.person_id}',false)">رفض</button></span></div>`).join('')}<div style="margin-top:8px">${board(c,me)}</div><div class="mute" style="margin-top:6px">تُحتسب النقاط بعد اعتماد ولي الأمر.</div>${c.can_delete?`<button class="btn ghost sm" style="margin-top:6px" onclick="chDel('${c.id}')">حذف التحدي</button>`:''}</div>`}
+const chips=(items,set,fn)=>items.map(x=>`<button class="btn ${set.has(x.id)?'':'ghost'} sm" style="margin:2px" onclick="${fn}('${x.id}')">${set.has(x.id)?'✓ ':''}${esc(x.emoji)} ${esc(x.name)}${x.label?' • '+esc(x.label):''}</button>`).join('');
+function cfSync(){if(!$('ct'))return;cf.title=v('ct');cf.metric=v('cm');cf.days=v('cd');cf.cat=v('cc');cf.unit=$('cu')?v('cu'):cf.unit}
+const tog=id=>{cfSync();sel.has(id)?sel.delete(id):sel.add(id);render()},togM=id=>{selM.has(id)?selM.delete(id):selM.add(id);render()},setCsub=x=>{csub=x;render()};
+function compV(){
+ if(!CS||!FR)return '<div class="card mute">جارٍ التحميل…</div>';const me=S.person.id;
+ let h='<h2>🏆 المنافسة</h2>'+TABS(csub,[['ch','التحديات'],['fr','الأصدقاء']]).replace(/setAt/g,'setCsub');
+ if(csub==='ch'){const fm=new Map();FR.friends.forEach(f=>fm.set(f.friend,{id:f.friend,name:f.name,emoji:f.emoji,label:f.label}));
+  h+=`<div class="card"><h3>تحدٍّ جديد</h3><input id="ct" value="${esc(cf.title||'')}" placeholder="مثال: من يقرأ أكثر هذا الأسبوع؟"><div class="f2"><select id="cm" onchange="cfSync();render()"><option value="xp" ${cf.metric==='xp'?'selected':''}>بالنقاط</option><option value="tasks" ${cf.metric==='tasks'?'selected':''}>بعدد المهام</option><option value="count" ${cf.metric==='count'?'selected':''}>بالعدد (صفحات، دقائق…)</option></select><select id="cd">${[7,14,30].map(d=>`<option value="${d}" ${+cf.days===d?'selected':''}>${d} يومًا</option>`).join('')}</select>${cf.metric==='count'?`<input id="cu" value="${esc(cf.unit||'')}" placeholder="الوحدة: صفحة">`:''}<select id="cc"><option value="">كل الأنواع</option>${Object.keys(CATS).map(c=>`<option value="${c}" ${cf.cat===c?'selected':''}>${CATS[c][0]} ${CATS[c][1]}</option>`).join('')}</select></div><div class="mute" style="margin-top:6px">المشاركون من عائلتك:</div>${chips(FR.managed,sel,'tog')}${fm.size?`<div class="mute" style="margin-top:6px">أصدقاؤك (يدخلون بموافقة أولياء أمورهم):</div>${chips([...fm.values()],sel,'tog')}`:'<div class="mute" style="margin-top:6px">أضف أصدقاء من تبويب «الأصدقاء» لتدعوهم.</div>'}<button class="btn sun" style="width:100%;margin-top:8px" onclick="chNew()">إنشاء التحدي</button></div>`;
+  h+=CS.items.length?CS.items.map(c=>chCard(c,me)).join(''):'<div class="card mute">لا تحديات بعد</div>'}
+ else{
+  h+=`<div class="card"><h3>🔗 رابط الإضافة</h3><div class="note" style="word-break:break-all;margin:6px 0">${base()}?add=${esc(FR.code)}</div><button class="btn sm" onclick="copyLink()">نسخ الرابط</button><div class="mute" style="margin-top:6px">أرسله لقريبك أو صديقك. لا يُضاف أحد إلا بموافقة ولي أمر كل ابن.</div></div>`;
+  if(FR.incoming.length)h+=`<h2>طلبات صداقة <span class="pill">${FR.incoming.length}</span></h2>`+FR.incoming.map(r=>`<div class="card"><h3>${esc(r.label)} يريد إضافتكم</h3><div class="mute">سيُضاف: ${r.members.map(m=>esc(m.emoji)+' '+esc(m.name)).join('، ')}</div><div class="mute" style="margin-top:6px">اختر من يُضاف من عائلتك:</div>${chips(FR.managed,selM,'togM')}<div class="row" style="margin-top:8px"><button class="btn" onclick="frResp('${r.id}',true)">قبول</button><button class="btn ghost" onclick="frResp('${r.id}',false)">رفض</button></div></div>`).join('');
+  if(FR.outgoing.length)h+=`<h2>طلبات أرسلتها</h2>`+FR.outgoing.map(r=>`<div class="card row sp"><span>${esc(r.label)}</span><span class="pill w">بانتظار الموافقة</span></div>`).join('');
+  h+=`<h2>الأصدقاء</h2>`+(FR.friends.length?FR.friends.map(f=>{const m=FR.managed.find(x=>x.id===f.mine);return `<div class="card row sp"><span>${esc(m?m.name:'')} ⟷ ${esc(f.emoji)} <b>${esc(f.name)}</b> <span class="mute">${esc(f.label)}</span></span><button class="btn ghost sm" onclick="frDel('${f.mine}','${f.friend}')">إزالة</button></div>`}).join(''):'<div class="card mute">لا أصدقاء بعد. شارك رابطك أو افتح رابط صديق.</div>')}
+ return h}
+const clrAdd=()=>{ADD=null;if(typeof history!=='undefined'&&typeof location!=='undefined')history.replaceState(null,'',location.pathname)};
+function reqV(){shell(1);$('view').innerHTML=`<h2>🤝 طلب صداقة</h2><div class="card"><h3>${esc(FQ.label)}</h3><div class="mute" style="margin:4px 0 8px">من تريد إضافته من عائلتك؟ لا يُضاف أي ابن إلا باختيارك أنت، وبعد موافقة الطرف الآخر.</div>${chips(FR.managed,selM,'togM')}<div class="row" style="margin-top:10px"><button class="btn sun" onclick="frSend()">إرسال الطلب</button><button class="btn ghost" onclick="clrAdd();selM=new Set();render()">إلغاء</button></div></div>`}
+async function frSend(){try{await api('friend_request',{code:ADD,members:[...selM]});toast('أُرسل الطلب، بانتظار موافقة «'+FQ.label+'»');clrAdd();selM=new Set();tab='comp';csub='fr';await go('comp')}catch(e){fail(e)}}
+async function frResp(id,acc){try{await api('friend_respond',{id,accept:acc,members:[...selM]});toast(acc?'تمت الصداقة 🎉':'رُفض الطلب');selM=new Set();await loadComp();render()}catch(e){fail(e)}}
+const frDel=(a,b)=>cact('friend_remove',{a,b},'أُزيلت الصداقة'),chResp=(id,pid,acc)=>cact('challenge_respond',{id,person_id:pid,accept:acc},acc?'انضم للتحدي 🏆':'رُفضت الدعوة'),chDel=id=>cact('challenge_del',{id},'حُذف التحدي');
+async function cact(fn,p,m){try{await api(fn,p);if(m)toast(m);await loadComp();render()}catch(e){fail(e)}}
+async function chNew(){cfSync();try{await api('challenge_create',{title:cf.title,metric:cf.metric||'xp',unit:cf.unit,cat:cf.cat,days:+cf.days||7,members:[...sel]});toast('أُنشئ التحدي ✔');cf={};sel=new Set();await loadComp();render()}catch(e){fail(e)}}
+async function copyLink(){const u=base()+'?add='+FR.code;try{await navigator.clipboard.writeText(u);toast('نُسخ الرابط ✔')}catch(e){toast('انسخ الرابط يدويًا من الأعلى')}}
 
 boot();
