@@ -1,49 +1,6 @@
 <!DOCTYPE html><html lang="ar" dir="rtl"><head><meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1"><title>بيت المغامرين</title>
-<style>
-:root{--bg:#F7EBD2;--card:#FFFBF1;--ink:#173B3A;--pri:#1F6F6B;--sun:#F2A93B;--line:#E6D6B3}
-*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.7 system-ui,'Segoe UI',Tahoma,sans-serif}
-#app{max-width:480px;margin:0 auto;padding:16px 16px 60px}h1{color:var(--pri);margin:8px 0}h2{margin:18px 0 8px}
-.card{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px}
-input,select{width:100%;padding:9px;margin:4px 0;border:2px solid var(--line);border-radius:10px;font:inherit;background:#fff;color:#173B3A}
-button{border:0;border-radius:10px;padding:8px 14px;font:inherit;font-weight:600;background:var(--pri);color:#fff;cursor:pointer}
-button.s{background:var(--sun);color:#3a2600}.row{display:flex;gap:8px;align-items:center;justify-content:space-between}
-.m{color:#6B7F7A;font-size:13px}#t{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:#173B3A;color:#fff;padding:8px 16px;border-radius:99px}
-</style></head><body><div id="app"></div>
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>بيت المغامرين</title>
+<link rel="stylesheet" href="style.css"></head><body>
+<div class="app"><header><div class="row sp"><h1>🏕️ بيت المغامرين</h1><span class="row"><span class="pill w" id="fam"></span><button class="btn ghost sm" id="out" onclick="logout()" style="display:none">خروج</button></span></div></header><main id="view"><div class="card mute">جارٍ التحميل…</div></main><nav id="nav"></nav></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.js"></script>
-<script src="config.js"></script>
-<script>
-const sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);
-const CATS={cook:'🍳 الطبخ',tidy:'🧹 النظام',read:'📚 القراءة',faith:'🌙 القرب من الله',fit:'🏃 اللياقة',fam:'🤝 بر الأسرة',explore:'🌳 الاستكشاف',money:'💰 المال'};
-let U=null,F=null,kids=[],tasks=[];const app=document.getElementById('app');
-const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-const v=id=>document.getElementById(id).value.trim();
-function toast(m){const d=document.createElement('div');d.id='t';d.textContent=m;document.body.appendChild(d);setTimeout(()=>d.remove(),2500)}
-const fail=e=>{console.error(e);toast('تعذّر: '+(e.message||e));return true};
-sb.auth.onAuthStateChange((_e,s)=>{U=s?.user||null;load()});
-async function load(){
-  if(!U)return authView();
-  let r=await sb.from('families').select('*').eq('owner',U.id).maybeSingle();if(r.error&&fail(r.error))return;
-  F=r.data;if(!F)return createView();
-  const [k,t]=await Promise.all([sb.from('kids').select('*').eq('family_id',F.id).order('created_at'),sb.from('tasks').select('*').eq('family_id',F.id).order('created_at')]);
-  if((k.error&&fail(k.error))||(t.error&&fail(t.error)))return;kids=k.data;tasks=t.data;home()}
-function authView(){app.innerHTML=`<h1>🏕️ بيت المغامرين</h1><div class="card"><input id="em" type="email" placeholder="البريد الإلكتروني" autocomplete="email"><input id="pw" type="password" placeholder="كلمة المرور (6 أحرف فأكثر)" autocomplete="current-password"><div class="row"><button onclick="login()">دخول</button><button class="s" onclick="signup()">حساب جديد</button></div></div>`}
-async function login(){const r=await sb.auth.signInWithPassword({email:v('em'),password:v('pw')});r.error&&fail(r.error)}
-async function signup(){const r=await sb.auth.signUp({email:v('em'),password:v('pw')});if(r.error)return fail(r.error);if(!r.data.session)toast('تحقق من بريدك لتأكيد الحساب')}
-const logout=()=>sb.auth.signOut();
-function createView(){app.innerHTML=`<h1>أهلًا بك قائدًا للفريق 👋</h1><div class="card"><input id="fn" placeholder="اسم العائلة"><button class="s" onclick="mkFam()">إنشاء العائلة</button></div>`}
-async function mkFam(){const n=v('fn');if(!n)return toast('اكتب اسم العائلة');const r=await sb.from('families').insert({name:n});r.error?fail(r.error):load()}
-const xp=k=>tasks.filter(t=>t.kid_id===k&&t.status==='done').reduce((a,t)=>a+t.xp,0);
-function home(){
- const pend=tasks.filter(t=>t.status==='pending'),kn=id=>esc(kids.find(k=>k.id===id)?.name);
- const grp=Object.keys(CATS).map(c=>{const a=tasks.filter(t=>t.cat===c);return a.length?`<h3>${CATS[c]} <span class="m">${a.filter(t=>t.status==='done').length}/${a.length}</span></h3>`+a.map(t=>`<div class="card row"><span>${t.status==='done'?'✅':t.status==='pending'?'⏳':'⚪'} ${esc(t.title)} <span class="m">(${kn(t.kid_id)} • ${t.xp})</span></span>${t.status==='todo'?`<button onclick="st('${t.id}','pending')">خلصت</button>`:''}</div>`).join(''):''}).join('');
- app.innerHTML=`<div class="row"><h1>🏕️ ${esc(F.name)}</h1><button onclick="logout()">خروج</button></div>
- <h2>الأبناء</h2>${kids.map(k=>`<div class="card row"><span>${esc(k.emoji)} <b>${esc(k.name)}</b></span><span>⭐ ${xp(k.id)}</span></div>`).join('')||'<div class="m">لا أبناء بعد</div>'}
- <div class="card"><div class="row"><input id="kn" placeholder="اسم الابن"><input id="ka" type="number" placeholder="العمر" style="width:90px"></div><button class="s" onclick="addKid()">أضف ابنًا</button></div>
- <h2>بانتظار اعتمادك ${pend.length||''}</h2>${pend.map(t=>`<div class="card row"><span>${esc(t.title)} <span class="m">(${kn(t.kid_id)})</span></span><span><button onclick="st('${t.id}','done')">✔ اعتماد</button> <button class="s" onclick="st('${t.id}','todo')">إعادة</button></span></div>`).join('')||'<div class="m">لا شيء معلّق</div>'}
- <h2>أضف مهمة</h2><div class="card"><input id="tt" placeholder="عنوان المهمة"><select id="tk">${kids.map(k=>`<option value="${k.id}">${esc(k.name)}</option>`).join('')}</select><select id="tc">${Object.entries(CATS).map(([c,n])=>`<option value="${c}">${n}</option>`).join('')}</select><select id="tx"><option>5</option><option selected>10</option><option>15</option><option>20</option></select><button class="s" onclick="addTask()">أضف</button></div>
- <h2>المهام حسب النوع</h2>${grp||'<div class="m">لا مهام بعد</div>'}`}
-async function addKid(){const n=v('kn');if(!n)return toast('اكتب الاسم');const r=await sb.from('kids').insert({family_id:F.id,name:n,age:+v('ka')||null});r.error?fail(r.error):load()}
-async function addTask(){const t=v('tt'),k=v('tk');if(!t||!k)return toast('أضف ابنًا واكتب عنوان المهمة');const r=await sb.from('tasks').insert({family_id:F.id,kid_id:k,title:t,cat:v('tc'),xp:+v('tx')});r.error?fail(r.error):load()}
-async function st(id,s){const r=await sb.from('tasks').update({status:s,done_at:s==='done'?new Date().toISOString():null}).eq('id',id);r.error?fail(r.error):load()}
-</script></body></html>
+<script src="config.js"></script><script src="app.js"></script></body></html>
