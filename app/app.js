@@ -14,7 +14,7 @@ const kact=(fn,p,msg)=>act(fn,{token:kt(),...p},msg);
 async function refresh(){S=await api(mode==='kid'?'kid_state':'app_state',mode==='kid'?{token:kt()}:{});render()}
 async function boot(){
  try{const {data}=await sb.auth.getSession();
-  if(data.session){S=await api('app_state');if(!S.person){mode='adult';return onbView()}mode='adult';tab='home';if(ADD){try{[FQ,FR]=await Promise.all([api('friend_preview',{code:ADD}),api('friends_state')]);selM=new Set();return reqV()}catch(e){fail(e);clrAdd()}}return render()}
+  if(data.session){S=await api('app_state');if(!S.person){mode='adult';return onbView()}mode='adult';tab='home';if(ADD){try{[FQ,FR]=await Promise.all([api('friend_preview',{code:ADD}),api('friends_state')]);selM=FR.managed.length===1?new Set([FR.managed[0].id]):new Set();return reqV()}catch(e){fail(e);clrAdd()}}return render()}
   if(kt()){try{mode='kid';S=await api('kid_state',{token:kt()});tab='tasks';return render()}catch(e){localStorage.removeItem('kt')}}
   mode='auth';authView()}catch(e){fail(e);mode='auth';authView()}}
 function shell(on){$('nav').innerHTML='';$('out').style.display=on?'':'none';$('fam').textContent=on&&S&&S.family?S.family.name:''}
@@ -89,8 +89,8 @@ function kidV(){const K=S.person;
  return `<h2>👨‍👩‍👧 فريق العائلة</h2>${goalCard()}${advCard(0)}<h2>تقدّمك مع نفسك</h2><div class="card"><div class="row sp"><span>هذا الأسبوع</span><b>${wk(0,7)}</b></div><div class="row sp"><span>الأسبوع الماضي</span><b>${wk(7,14)}</b></div><div class="mute" style="margin-top:4px">المقارنة الأهم هي مع نفسك 💪</div></div>${champ()}`}
 /* ===== العمليات ===== */
 const fin=id=>kact('kid_finish',{id},'أُرسلت لأبيك للاعتماد ⏳'),kprog=(id,n)=>kact('kid_progress',{id,amount:n},'سُجّل تقدمك ✔'),buy=id=>kact('kid_buy',{item_id:id},'أُرسل طلبك لأبيك بانتظار موافقته ⏳');
-const setSt=(id,s,m)=>act('task_set',{id,status:s},m),delT=id=>act('task_del',{id},'حُذفت المهمة'),ordSet=(id,s)=>act('order_set',{id,status:s},s==='ok'?'تمت الموافقة 🎉':'رُفض الطلب وأُعيدت النقاط');
-const delS=id=>act('store_del',{id}),setAdv=()=>{const a=S.family.adventure,i=ADVS.indexOf(a);return act('set_adventure',{adventure:ADVS[(i+1)%ADVS.length]},'تم تحديد الوجهة')};
+const setSt=(id,s,m)=>act('task_set',{id,status:s},m),delT=id=>ask('حذف هذه المهمة؟')&&act('task_del',{id},'حُذفت المهمة'),ordSet=(id,s)=>act('order_set',{id,status:s},s==='ok'?'تمت الموافقة 🎉':'رُفض الطلب وأُعيدت النقاط');
+const delS=id=>ask('حذف هذه الجائزة؟')&&act('store_del',{id}),setAdv=()=>{const a=S.family.adventure,i=ADVS.indexOf(a);return act('set_adventure',{adventure:ADVS[(i+1)%ADVS.length]},'تم تحديد الوجهة')};
 async function appr(id){const t=S.tasks.find(x=>x.id===id),m=mem(t.person_id),l0=lvl(m.xp).i,t0=tier(cnt(m,t.cat));
  try{await api('task_set',{id,status:'done'});await refresh();const m2=mem(t.person_id),l1=lvl(m2.xp).i,t1=tier(cnt(m2,t.cat));
  toast(l1>l0?'🎉 '+m2.name+' ارتقى إلى «'+lvl(m2.xp).name+'»':t1>t0?'🎖️ شارة «'+BADGES[t.cat]+'» '+TN[t1-1]+'!':'تم الاعتماد +'+t.xp+' نقطة')}catch(e){fail(e)}}
@@ -136,11 +136,11 @@ async function lSave(){const items=parseItems($('fi').value);const p={id:ed.id,t
  try{await api('list_save',p);toast('تم الحفظ ✔');ed=null;await loadLib();render()}catch(e){fail(e)}}
 const lApply=id=>{const ids=tgtIds();if(!ids.length)return toast('أنشئ حساب ابن أولًا من تبويب العائلة');return act('list_apply',{id,person_ids:ids},'أُضيفت مهام القائمة ✔')};
 const lCopy=(id,to)=>lact('list_copy',{id,to},to==='family'?'نُسخت إلى مكتبة العائلة ✔':'نُسخت إلى قوائمك ✔');
-const lDel=id=>lact('list_del',{id},'حُذفت القائمة'),lPub=id=>lact('list_publish',{id},'أُرسلت للمراجعة، وتظهر للجميع بعد القبول'),lRev=(id,s)=>lact('admin_review',{id,status:s},s==='approved'?'قُبلت القائمة':'رُفضت القائمة');
+const lDel=id=>ask('حذف هذه القائمة؟ المهام التي أُضيفت منها لا تُحذف.')&&lact('list_del',{id},'حُذفت القائمة'),lPub=id=>lact('list_publish',{id},'أُرسلت للمراجعة، وتظهر للجميع بعد القبول'),lRev=(id,s)=>lact('admin_review',{id,status:s},s==='approved'?'قُبلت القائمة':'رُفضت القائمة');
 
 /* ===== الأصدقاء والتحديات ===== */
 const base=()=>typeof location!=='undefined'?location.origin+location.pathname:'https://YOUR-SITE/';
-async function loadComp(){try{if(mode==='kid')CS=await api('kid_challenges',{token:kt()});else{const r=await Promise.all([api('challenges_state'),api('friends_state')]);CS=r[0];FR=r[1]}}catch(e){fail(e)}}
+async function loadComp(){try{if(mode==='kid')CS=await api('kid_challenges',{token:kt()});else{const r=await Promise.all([api('challenges_state'),api('friends_state')]);CS=r[0];FR=r[1];if(FR.managed.length===1)selM=new Set([FR.managed[0].id])}}catch(e){fail(e)}}
 const unitOf=c=>c.metric==='xp'?'نقطة':c.metric==='tasks'?'مهمة':esc(c.unit||'');
 function board(c,me){const mx=Math.max(1,...c.board.map(b=>b.score));return c.board.length?c.board.map((b,i)=>`<div style="margin:6px 0"><div class="row sp"><span>${['🥇','🥈','🥉'][i]||(i+1)+'.'} ${esc(b.emoji)} <b>${esc(b.name)}</b> <span class="mute">${esc(b.label||'')}</span></span><span class="pill ${b.id===me?'g':'w'}">${b.score} ${unitOf(c)}</span></div><div class="bar"><i style="width:${Math.round(b.score/mx*100)}%"></i></div></div>`).join(''):'<div class="mute">تظهر القائمة بعد انضمام المشاركين</div>'}
 function chCard(c,me){const left=Math.ceil((new Date(c.end_at)-Date.now())/864e5),inv=c.mine.filter(m=>m.status==='invited'),mt=c.metric==='count'?'القياس: '+esc(c.unit):c.metric==='xp'?'القياس: النقاط':'القياس: عدد المهام';
@@ -156,15 +156,15 @@ function compV(){
   h+=CS.items.length?CS.items.map(c=>chCard(c,me)).join(''):'<div class="card mute">لا تحديات بعد</div>'}
  else{
   h+=`<div class="card"><h3>🔗 رابط الإضافة</h3><div class="note" style="word-break:break-all;margin:6px 0">${base()}?add=${esc(FR.code)}</div><button class="btn sm" onclick="copyLink()">نسخ الرابط</button><div class="mute" style="margin-top:6px">أرسله لقريبك أو صديقك. لا يُضاف أحد إلا بموافقة ولي أمر كل ابن.</div></div>`;
-  if(FR.incoming.length)h+=`<h2>طلبات صداقة <span class="pill">${FR.incoming.length}</span></h2>`+FR.incoming.map(r=>`<div class="card"><h3>${esc(r.label)} يريد إضافتكم</h3><div class="mute">سيُضاف: ${r.members.map(m=>esc(m.emoji)+' '+esc(m.name)).join('، ')}</div><div class="mute" style="margin-top:6px">اختر من يُضاف من عائلتك:</div>${chips(FR.managed,selM,'togM')}<div class="row" style="margin-top:8px"><button class="btn" onclick="frResp('${r.id}',true)">قبول</button><button class="btn ghost" onclick="frResp('${r.id}',false)">رفض</button></div></div>`).join('');
-  if(FR.outgoing.length)h+=`<h2>طلبات أرسلتها</h2>`+FR.outgoing.map(r=>`<div class="card row sp"><span>${esc(r.label)}</span><span class="pill w">بانتظار الموافقة</span></div>`).join('');
+  if(FR.incoming.length)h+=`<h2>طلبات صداقة <span class="pill">${FR.incoming.length}</span></h2>`+FR.incoming.map(r=>`<div class="card"><h3>${esc(r.label)} يريد إضافتكم</h3><div class="mute">سيُضاف: ${r.members.map(m=>esc(m.emoji)+' '+esc(m.name)).join('، ')}</div>${pickM()}<div class="row" style="margin-top:8px"><button class="btn" onclick="frResp('${r.id}',true)">قبول</button><button class="btn ghost" onclick="frResp('${r.id}',false)">رفض</button></div></div>`).join('');
+  if(FR.outgoing.length)h+=`<h2>طلبات أرسلتها</h2>`+FR.outgoing.map(r=>`<div class="card row sp"><span>${esc(r.label)}</span><span class="row"><span class="pill w">بانتظار الموافقة</span><button class="btn ghost sm" onclick="frCancel('${r.id}')">إلغاء</button></span></div>`).join('');
   h+=`<h2>الأصدقاء</h2>`+(FR.friends.length?FR.friends.map(f=>{const m=FR.managed.find(x=>x.id===f.mine);return `<div class="card row sp"><span>${esc(m?m.name:'')} ⟷ ${esc(f.emoji)} <b>${esc(f.name)}</b> <span class="mute">${esc(f.label)}</span></span><button class="btn ghost sm" onclick="frDel('${f.mine}','${f.friend}')">إزالة</button></div>`}).join(''):'<div class="card mute">لا أصدقاء بعد. شارك رابطك أو افتح رابط صديق.</div>')}
  return h}
 const clrAdd=()=>{ADD=null;if(typeof history!=='undefined'&&typeof location!=='undefined')history.replaceState(null,'',location.pathname)};
-function reqV(){shell(1);$('view').innerHTML=`<h2>🤝 طلب صداقة</h2><div class="card"><h3>${esc(FQ.label)}</h3><div class="mute" style="margin:4px 0 8px">من تريد إضافته من عائلتك؟ لا يُضاف أي ابن إلا باختيارك أنت، وبعد موافقة الطرف الآخر.</div>${chips(FR.managed,selM,'togM')}<div class="row" style="margin-top:10px"><button class="btn sun" onclick="frSend()">إرسال الطلب</button><button class="btn ghost" onclick="clrAdd();selM=new Set();render()">إلغاء</button></div></div>`}
+function reqV(){shell(1);$('view').innerHTML=`<h2>🤝 طلب صداقة</h2><div class="card"><h3>${esc(FQ.label)}</h3>${FR.managed.length===1?'<div class="mute" style="margin:4px 0 8px">سيُضاف حسابك أنت بعد موافقة الطرف الآخر ✓</div>':`<div class="mute" style="margin:4px 0 8px">من تريد إضافته من عائلتك؟ لا يُضاف أي ابن إلا باختيارك أنت، وبعد موافقة الطرف الآخر.</div>${chips(FR.managed,selM,'togM')}`}<div class="row" style="margin-top:10px"><button class="btn sun" onclick="frSend()">إرسال الطلب</button><button class="btn ghost" onclick="clrAdd();selM=new Set();render()">إلغاء</button></div></div>`}
 async function frSend(){try{await api('friend_request',{code:ADD,members:[...selM]});toast('أُرسل الطلب، بانتظار موافقة «'+FQ.label+'»');clrAdd();selM=new Set();tab='comp';csub='fr';await go('comp')}catch(e){fail(e)}}
 async function frResp(id,acc){try{await api('friend_respond',{id,accept:acc,members:[...selM]});toast(acc?'تمت الصداقة 🎉':'رُفض الطلب');selM=new Set();await loadComp();render()}catch(e){fail(e)}}
-const frDel=(a,b)=>cact('friend_remove',{a,b},'أُزيلت الصداقة'),chResp=(id,pid,acc)=>cact('challenge_respond',{id,person_id:pid,accept:acc},acc?'انضم للتحدي 🏆':'رُفضت الدعوة'),chDel=id=>cact('challenge_del',{id},'حُذف التحدي');
+const frDel=(a,b)=>ask('إزالة هذه الصداقة؟')&&cact('friend_remove',{a,b},'أُزيلت الصداقة'),chResp=(id,pid,acc)=>cact('challenge_respond',{id,person_id:pid,accept:acc},acc?'انضم للتحدي 🏆':'رُفضت الدعوة'),chDel=id=>ask('حذف هذا التحدي؟')&&cact('challenge_del',{id},'حُذف التحدي');
 async function cact(fn,p,m){try{await api(fn,p);if(m)toast(m);await loadComp();render()}catch(e){fail(e)}}
 async function chNew(){cfSync();try{await api('challenge_create',{title:cf.title,metric:cf.metric||'xp',unit:cf.unit,cat:cf.cat,days:+cf.days||7,members:[...sel]});toast('أُنشئ التحدي ✔');cf={};sel=new Set();await loadComp();render()}catch(e){fail(e)}}
 async function copyLink(){const u=base()+'?add='+FR.code;try{await navigator.clipboard.writeText(u);toast('نُسخ الرابط ✔')}catch(e){toast('انسخ الرابط يدويًا من الأعلى')}}
@@ -178,7 +178,7 @@ const LOADING='<div class="card mute">جارٍ التحميل…</div>';
 async function loadHab(){try{HB=mode==='kid'?await api('kid_habits',{token:kt(),day:today()}):await api('habits_state',{day:today()})}catch(e){fail(e)}}
 async function loadCal(){try{CAL=mode==='kid'?await api('kid_calendar',{token:kt(),month:cm}):await api('calendar_state',{month:cm})}catch(e){fail(e)}}
 const hact=async(fn,p,m)=>{try{await api(fn,p);if(m)toast(m);await loadHab();if(CAL)await loadCal();await refresh()}catch(e){fail(e)}};
-const hChk=id=>hact('habit_check',{id,day:today()}),hDel=id=>hact('habit_del',{id},'حُذفت العادة'),hRev=(id,day,ok)=>hact('habit_review',{id,day,approve:ok},ok?'تم الاعتماد ✔':'رُفضت'),hDay=(pid,day)=>hact('habit_approve_day',{person_id:pid,day},'اعتُمد اليوم كله ✔'),kHab=id=>hact('kid_habit_check',{token:kt(),id,day:today()});
+const hChk=id=>hact('habit_check',{id,day:today()}),hDel=id=>ask('حذف هذه العادة؟ النقاط التي اكتُسبت تبقى.')&&hact('habit_del',{id},'حُذفت العادة'),hRev=(id,day,ok)=>hact('habit_review',{id,day,approve:ok},ok?'تم الاعتماد ✔':'رُفضت'),hDay=(pid,day)=>hact('habit_approve_day',{person_id:pid,day},'اعتُمد اليوم كله ✔'),kHab=id=>hact('kid_habit_check',{token:kt(),id,day:today()});
 const habPendCard=()=>S.habit_pending>0?`<div class="card row sp"><span>🌱 عادات بانتظار اعتمادك</span><span class="row"><span class="pill">${S.habit_pending}</span><button class="btn sm" onclick="go('hab')">افتح</button></span></div>`:'';
 const wdText=h=>h.weekdays.length===7?'يوميًا':h.weekdays.map(d=>WD[d]).join('، ');
 function wk(h){const L=HB.logs.filter(l=>l.habit_id===h.id);let r='';for(let i=6;i>=0;i--){const d=new Date();d.setDate(d.getDate()-i);const k=ymd(d),sc=h.weekdays.includes(d.getDay()),lg=L.find(l=>l.day===k);r+=`<i class="${!sc?'u':lg?(lg.status==='done'?'d':'p'):i===0?'':'m'}"></i>`}return `<span class="wk">${r}</span>`}
@@ -211,5 +211,21 @@ function calV(g){if(!CAL)return LOADING;const y=+cm.slice(0,4),mo=+cm.slice(5,7)
  const o=info(+sel.slice(8,10)),filt=g&&S.members.filter(m=>m.role==='child').length?`<select onchange="cpf=this.value;render()"><option value="all">كل الأبناء</option>${S.members.filter(m=>m.role==='child').map(m=>`<option value="${m.id}" ${cpf===m.id?'selected':''}>${esc(m.name)}</option>`).join('')}</select>`:'';
  const rows=[...o.t.map(t=>`<div>${t.status==='done'?'✅':'⚪'} ${esc(t.title)}${t.due?' <span class="mute">(استحقاق)</span>':''}${who(t.person_id)}</div>`),...o.hs.map(h=>{const l=o.lg.find(x=>x.habit_id===h.id);return `<div>🌱 ${esc(h.title)} ${l?(l.status==='done'?'✅':'⏳'):(o.k<td?'⚪ فاتت':'<span class="mute">مجدولة</span>')}${who(h.person_id)}</div>`}),...o.ch.map(c=>`<div>🏆 ${esc(c.title)}</div>`)];
  return `<div class="row sp"><button class="btn ghost sm" onclick="calGo(-1)">▶ السابق</button><b>${MN[mo]} ${y}</b><button class="btn ghost sm" onclick="calGo(1)">التالي ◀</button></div>${filt}<div class="cal" style="margin-top:8px">${['سبت','أحد','اثنين','ثلاثاء','أربعاء','خميس','جمعة'].map(x=>`<div class="h">${x}</div>`).join('')}${cells}</div><div class="mute" style="margin:6px 0"><span class="dt t"></span> مهام <span class="dt h"></span> عادات منجزة <span class="dt p"></span> بانتظار اعتماد <span class="dt c"></span> تحدٍّ</div><div class="card"><h3>${sel}</h3>${rows.length?rows.join(''):'<div class="mute">لا شيء في هذا اليوم</div>'}</div>`}
+
+const ask=m=>typeof confirm==='undefined'||confirm(m);
+const pickM=()=>FR.managed.length===1?'<div class="mute" style="margin-top:6px">سيُضاف حسابك أنت ✓</div>':`<div class="mute" style="margin-top:6px">اختر من يُضاف من عائلتك:</div>${chips(FR.managed,selM,'togM')}`;
+const frCancel=id=>cact('friend_cancel',{id},'أُلغي الطلب');
+/* ===== المظهر (يُحفظ على الجهاز) ===== */
+const PALS=[['warm','دافئ','#1F6F6B'],['ocean','محيط','#1E6FB5'],['forest','غابة','#2F7D3C'],['berry','توت','#8E3B7A'],['sunset','غروب','#C4501E']];
+const sg=k=>{try{return localStorage.getItem(k)}catch(e){return null}},sv=(k,x)=>{try{localStorage.setItem(k,x)}catch(e){}};
+let TH={mode:sg('bm_mode')||'auto',pal:sg('bm_pal')||'warm'};
+const mq=()=>typeof matchMedia!=='undefined'?matchMedia('(prefers-color-scheme: dark)'):null;
+const effMode=()=>TH.mode==='auto'?(mq()&&mq().matches?'dark':'light'):TH.mode;
+function applyTheme(){const r=typeof document!=='undefined'&&document.documentElement;if(!r||!r.setAttribute)return;r.setAttribute('data-mode',effMode());r.setAttribute('data-pal',TH.pal)}
+if(mq()&&mq().addEventListener)mq().addEventListener('change',()=>{if(TH.mode==='auto')applyTheme()});
+const setMode=m=>{TH.mode=m;sv('bm_mode',m);applyTheme();drawTheme()},setPal=p=>{TH.pal=p;sv('bm_pal',p);applyTheme();drawTheme()};
+function drawTheme(){$('theme').innerHTML=`<div class="card"><h3>🎨 المظهر</h3><div class="row wrap" style="margin:6px 0">${[['auto','تلقائي'],['light','فاتح'],['dark','داكن']].map(x=>`<button class="btn ${TH.mode===x[0]?'':'ghost'} sm" onclick="setMode('${x[0]}')">${x[1]}</button>`).join('')}</div><div class="row wrap">${PALS.map(p=>`<button class="sw ${TH.pal===p[0]?'on':''}" style="background:${p[2]}" aria-label="${p[1]}" title="${p[1]}" onclick="setPal('${p[0]}')"></button>`).join('')}</div><div class="mute" style="margin-top:6px">يُحفظ على هذا الجهاز.</div></div>`}
+const toggleTheme=()=>{const el=$('theme');if(el.style.display==='block')el.style.display='none';else{drawTheme();el.style.display='block'}};
+applyTheme();
 
 boot();
