@@ -3,116 +3,145 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="description" content="مسار: مهامك وعاداتك وبرامجك وتحدياتك في مكان واحد. خطواتك في مسار.">
+<meta name="description" content="مسار: مهامك وعاداتك وبرامجك وتحدياتك في مكان واحد. تحوّل شخصي خطوة بخطوة، وحماية عائلية اختيارية لمن يريد إشراك عائلته.">
 <meta property="og:type" content="website"><meta property="og:title" content="مسار – خطواتك في مسار">
-<meta property="og:description" content="برامج جاهزة وقوائم وعادات وتحديات مع الأصدقاء، وحماية عائلية اختيارية للأبناء.">
+<meta property="og:description" content="من الفوضى إلى الوضوح: مهام بخطوات، وبرامج، وعادات، وتحديات مع الأصدقاء والعائلة.">
 <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Ctext y='.9em' font-size='90'%3E%F0%9F%A7%AD%3C/text%3E%3C/svg%3E">
 <title>مسار – خطواتك في مسار</title>
 <link href="https://fonts.googleapis.com/css2?family=Baloo+Bhaijaan+2:wght@600;800&family=IBM+Plex+Sans+Arabic:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-:root{--bg:#FBF3E4;--card:#FFFCF5;--ink:#1E3A38;--mute:#5F7370;--line:#EBDDBF;--pri:#1F6F6B;--sun:#F2A93B;--coral:#E4572E;--sky:#DDEFE9;--ok:#3E9B5F;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F2A29;--card:#173B3A;--ink:#FBF0D8;--mute:#A9C2BC;--line:#2A5350;--sky:#1D4745}}
-:root[data-theme="dark"]{--bg:#0F2A29;--card:#173B3A;--ink:#FBF0D8;--mute:#A9C2BC;--line:#2A5350;--sky:#1D4745}
+:root{--bg:#F8FAFC;--card:#FFFFFF;--ink:#0F172A;--mute:#475569;--line:#E2E8F0;--pri:#0F766E;--link:#0F766E;--gold:#F59E0B;--goldtx:#B45309;--tint:#F0FDFA;--band:#0F766E;--ok:#047857;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0F172A;--card:#1E293B;--ink:#E2E8F0;--mute:#94A3B8;--line:#334155;--link:#2DD4BF;--goldtx:#FBBF24;--tint:#132034;--band:#115E59}}
+:root[data-theme="dark"]{--bg:#0F172A;--card:#1E293B;--ink:#E2E8F0;--mute:#94A3B8;--line:#334155;--link:#2DD4BF;--goldtx:#FBBF24;--tint:#132034;--band:#115E59}
 html{scroll-padding-top:env(safe-area-inset-top,0px);scroll-behavior:smooth}*{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:'IBM Plex Sans Arabic',system-ui,sans-serif;line-height:1.8}
-h1,h2,h3,.disp{font-family:'Baloo Bhaijaan 2','IBM Plex Sans Arabic',sans-serif;line-height:1.25;margin:0}
-.w{max-width:1040px;margin:0 auto;padding:0 20px}section{padding:56px 0}
-.nav{display:flex;justify-content:space-between;align-items:center;padding:16px 0}.logo{font-size:22px;font-weight:800;color:var(--pri)}
-.btn{display:inline-block;background:var(--coral);color:#fff;font-weight:600;text-decoration:none;padding:12px 26px;border-radius:99px;box-shadow:0 4px 0 rgba(0,0,0,.15)}.btn.alt{background:transparent;color:var(--ink);border:2px solid var(--line);box-shadow:none}
-.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;padding:30px 0 56px}
-h1{font-size:clamp(34px,6vw,58px);font-weight:800}h1 em{font-style:normal;color:var(--coral)}
+h1,h2,h3,.disp{font-family:'Baloo Bhaijaan 2','IBM Plex Sans Arabic',sans-serif;line-height:1.3;margin:0}
+.w{max-width:1040px;margin:0 auto;padding:0 20px}section{padding:56px 0}a{color:var(--link)}
+.nav{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:14px 0;flex-wrap:wrap}.logo{font-size:22px;font-weight:800}.nav .r{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.btn{display:inline-block;background:var(--pri);color:#fff;font:inherit;font-weight:600;text-decoration:none;border:2px solid var(--pri);padding:11px 24px;border-radius:12px;cursor:pointer}
+.btn.alt{background:transparent;color:var(--ink);border-color:var(--line)}.btn.sm{padding:6px 14px;font-size:14px}
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:36px;align-items:center;padding:28px 0 56px}
+h1{font-size:clamp(32px,5.6vw,54px);font-weight:800}h1 em{font-style:normal;color:var(--link)}
 .lead{font-size:19px;color:var(--mute);margin:16px 0 24px}.cta{display:flex;gap:12px;flex-wrap:wrap}
-.card{background:var(--card);border:2px solid var(--line);border-radius:22px;padding:20px}
-h2{font-size:clamp(26px,4vw,38px);font-weight:800;margin-bottom:8px}.sub{color:var(--mute);margin:0 0 26px;max-width:640px}
-.demo h3{font-size:18px;margin-bottom:10px}.bar{height:14px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 14px}.bar i{display:block;height:100%;width:0;background:linear-gradient(90deg,var(--sun),var(--coral));transition:width .5s}
-.t{display:flex;align-items:center;gap:12px;width:100%;text-align:right;font:inherit;color:inherit;background:var(--bg);border:2px solid var(--line);border-radius:14px;padding:9px 12px;margin-bottom:8px;cursor:pointer}
-.t b{margin-inline-start:auto;color:var(--pri)}.t .c{width:26px;height:26px;border-radius:50%;border:3px solid var(--pri);flex:none;display:grid;place-items:center;font-size:13px;color:#fff}.t.d{opacity:.65}.t.d .c{background:var(--ok);border-color:var(--ok)}
-.msg{min-height:28px;font-weight:600;color:var(--coral)}.mini{font-size:13px;color:var(--mute)}
-.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.src .card h3{margin-bottom:4px}.steps .n{font-size:40px;color:var(--sun);font-family:'Baloo Bhaijaan 2'}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:14px}.grid .card h3{font-size:18px}.grid p{margin:6px 0 0;color:var(--mute);font-size:15px}
-.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 10px;border-radius:99px;margin-bottom:8px}.on{background:var(--ok);color:#fff}.soon{background:var(--sun);color:#3a2600}
-.band{background:var(--pri);color:#fff}.band .sub{color:#CFE8E3}.band .card{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.25)}
-.tiers{display:flex;gap:12px;flex-wrap:wrap}.tier{flex:1;min-width:150px;text-align:center}.tier .m{font-size:44px}
-.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{background:var(--card);color:var(--ink);border:2px solid var(--line);border-radius:99px;padding:6px 16px;font-weight:500}
-.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}ul.k{padding:0;margin:0;list-style:none}ul.k li{padding:6px 0 6px 0}ul.k li::before{content:"✓ ";color:var(--ok);font-weight:800}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:20px}
+h2{font-size:clamp(25px,4vw,36px);font-weight:800;margin-bottom:8px}.sub{color:var(--mute);margin:0 0 26px;max-width:660px}
+.demo h3{font-size:18px;margin-bottom:10px}.bar{height:12px;background:var(--line);border-radius:99px;overflow:hidden;margin:8px 0 14px}.bar i{display:block;height:100%;width:0;background:var(--gold);transition:width .4s}
+.t{display:flex;align-items:center;gap:12px;width:100%;text-align:right;font:inherit;color:inherit;background:var(--tint);border:1px solid var(--line);border-radius:12px;padding:9px 12px;margin-bottom:8px;cursor:pointer}
+.t b{margin-inline-start:auto;color:var(--goldtx)}.t .c{width:24px;height:24px;border-radius:50%;border:2px solid var(--pri);flex:none;display:grid;place-items:center;font-size:12px;color:#fff}.t.d{opacity:.7}.t.d .c{background:var(--ok);border-color:var(--ok)}
+.msg{min-height:28px;font-weight:600;color:var(--goldtx)}.mini{font-size:13px;color:var(--mute)}
+.shift{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.shift .a{font-size:30px;letter-spacing:6px}.shift p{margin:6px 0 0;color:var(--mute)}
+.steps{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}.steps .n{font-size:38px;color:var(--goldtx);font-family:'Baloo Bhaijaan 2'}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}.grid .card h3{font-size:17px}.grid p{margin:6px 0 0;color:var(--mute);font-size:15px}
+.tag{display:inline-block;font-size:12px;font-weight:600;padding:1px 10px;border-radius:99px;margin-bottom:8px}.on{background:var(--ok);color:#fff}.soon{background:var(--gold);color:#0F172A}
+.chips{display:flex;flex-wrap:wrap;gap:10px}.chip{background:var(--card);color:var(--ink);border:1px solid var(--line);border-radius:99px;padding:6px 16px;font-weight:500}
+.tabs{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}.tabs button{font:inherit;font-weight:600;color:var(--ink);background:var(--card);border:1px solid var(--line);border-radius:99px;padding:7px 16px;cursor:pointer}.tabs button[aria-selected="true"]{background:var(--pri);border-color:var(--pri);color:#fff}
+.ex{list-style:none;margin:0;padding:0}.ex li{padding:9px 0;border-bottom:1px solid var(--line)}.ex li:last-child{border:0}.ex li::before{content:"◻ ";color:var(--goldtx)}
+.badges{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:14px}.badges .m{font-size:36px}.badges h3{font-size:16px;margin:4px 0}.badges p{margin:0;color:var(--mute);font-size:14px}
+.band{background:var(--band);color:#fff}.band .sub{color:#E2F5F2}.band .card{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:#fff}.band .chip{background:var(--card);color:var(--ink)}
+.two{display:grid;grid-template-columns:1fr 1fr;gap:20px}ul.k{padding:0;margin:0;list-style:none}ul.k li{padding:5px 0}ul.k li::before{content:"✓ ";font-weight:800}
 .final{text-align:center}.final .disp{font-size:clamp(28px,5vw,44px);font-weight:800}footer{padding:24px 0 36px;text-align:center;color:var(--mute);font-size:14px}
-@media(max-width:760px){.hero,.two,.steps{grid-template-columns:1fr}}
+@media(max-width:760px){.hero,.two,.steps,.shift{grid-template-columns:1fr}}
 @media(prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
-a:focus-visible,button:focus-visible{outline:3px solid var(--sun);outline-offset:3px}
+a:focus-visible,button:focus-visible{outline:3px solid var(--gold);outline-offset:3px}
 </style>
 </head>
 <body>
 <div class="w">
- <div class="nav"><span class="logo">🧭 مسار</span><span><a class="btn alt" href="#features">المزايا</a> <a class="btn alt" data-app href="#">دخول</a></span></div>
+ <div class="nav"><span class="logo">🧭 مسار</span>
+  <span class="r"><a class="btn alt sm" href="#examples">أمثلة</a><a class="btn alt sm" href="#badges">الشارات</a><a class="btn alt sm" href="#teams">التحديات</a><button class="btn alt sm" id="tt" aria-label="تبديل المظهر">🌓 تلقائي</button><a class="btn sm" data-app href="#">ابدأ</a></span></div>
  <div class="hero">
   <div>
-   <h1>خطواتك في <em>مسار</em></h1>
-   <p class="lead">مهامك وعاداتك وبرامجك وتحدياتك في مكان واحد. ابدأ بما تصنعه أنت، أو بما يصنعه غيرك، أو ببرامج جاهزة من مسار، وحدك أو مع من تحب.</p>
+   <h1>من الفوضى إلى الوضوح، <em>خطوة بخطوة</em></h1>
+   <p class="lead">مسار منصة شخصية لمهامك وعاداتك وبرامجك وتحدياتك. تعرف خطوتك التالية، وتحتفل بما أنجزتَ، وتكسر أرقامك. وإن أردتَ أن تُشرك عائلتك، فعّل الحماية العائلية متى شئت.</p>
    <div class="cta"><a class="btn" data-app href="#">ابدأ مجانًا</a><a class="btn alt" href="#try">جرّب بنفسك الآن</a></div>
   </div>
   <div class="card demo" id="try">
    <h3>🧭 جرّب: جلسة اليوم</h3>
-   <div class="row"><span class="disp" id="lv">🧭 مبتدئ</span> <span class="mini" id="xp">0 نقطة</span></div>
-   <div class="bar"><i id="pb"></i></div>
-   <div id="tl"></div>
-   <div class="msg" id="msg">اضغط على خطوة لتنجزها</div>
+   <div style="display:flex;justify-content:space-between"><span class="disp" id="lv">🧭 مبتدئ</span><span class="mini" id="xp">0 نقطة</span></div>
+   <div class="bar"><i id="pb"></i></div><div id="tl"></div>
+   <div class="msg" id="msg" aria-live="polite">اضغط على خطوة لتنجزها</div>
    <div class="mini">تجربة توضيحية داخل الصفحة. لا يُحفظ فيها شيء.</div>
   </div>
  </div>
 </div>
 
 <section><div class="w">
+ <h2>التحوّل الذي نبنيه معك</h2><p class="sub">ليس مزيدًا من القوائم، بل شعور مختلف بيومك.</p>
+ <div class="shift">
+  <div class="card"><div class="a">🌪️ ← 🎯</div><h3>من الضياع إلى الوضوح</h3><p>بدل أن تُشلّك كثرة المهام، تعرف الخطوة الواحدة التالية. كل مهمة تنقسم إلى خطوات صغيرة تُعلَّم واحدة واحدة.</p></div>
+  <div class="card"><div class="a">🥱 ← ⚡</div><h3>من الروتين إلى الاستمرار</h3><p>عادات بسلاسل متتالية، وبرامج مجدولة تضع الجلسات في تقويمك، ومنافسة ودّية مع من تحب.</p></div>
+  <div class="card"><div class="a">😔 ← 👑</div><h3>من جلد الذات إلى الفخر</h3><p>شارات وأرقام قياسية ترى بها تقدّمك بعينك: أطول سلسلة، وأفضل أسبوع، وما أنجزتَ من أمنياتك.</p></div>
+ </div>
+</div></section>
+
+<section id="examples"><div class="w">
+ <h2>أفكار جاهزة للبدء</h2><p class="sub">أمثلة لما تصنعه بنفسك أو تجده في «اكتشف»، في مجالات حياتك.</p>
+ <div class="tabs" role="tablist" id="extabs"></div>
+ <div class="card"><ul class="ex" id="exlist"></ul></div>
+ <div class="chips" style="margin-top:16px"><span class="chip">🏃 صحة ولياقة</span><span class="chip">📚 تعلّم ومعرفة</span><span class="chip">🌙 إيمان وروحانيات</span><span class="chip">💼 عمل وإنتاجية</span><span class="chip">💰 مال</span><span class="chip">🏠 بيت وتنظيم</span><span class="chip">🎨 مهارات وهوايات</span><span class="chip">🤝 علاقات وأسرة</span><span class="chip">🧭 استكشاف ومغامرة</span><span class="chip">🧘 صفاء وعناية بالنفس</span></div>
+</div></section>
+
+<section><div class="w">
  <h2>كيف يعمل مسار؟</h2><p class="sub">ثلاث خطوات تكفي لتبدأ.</p>
  <div class="steps">
   <div class="card"><div class="n">١</div><h3>اختر مسارك</h3><p>برنامج جاهز، أو قائمة، أو تحدٍّ، أو شيء تصنعه بنفسك.</p></div>
-  <div class="card"><div class="n">٢</div><h3>تقدّم خطوة بخطوة</h3><p>كل مهمة بقائمة خطوات، وعادات بسلاسل متتالية، وتقويم يجمع كل شيء.</p></div>
+  <div class="card"><div class="n">٢</div><h3>تقدّم خطوة بخطوة</h3><p>مهام بقوائم خطوات، وعادات بسلاسل، وتقويم يجمع كل شيء.</p></div>
   <div class="card"><div class="n">٣</div><h3>اكسب وشارك</h3><p>نقاط ومستويات وشارات، وتحديات مع أصدقائك وأقاربك.</p></div>
  </div>
 </div></section>
 
-<section class="src"><div class="w">
- <h2>ثلاثة مصادر لمسارك</h2><p class="sub">اكتشف بالوسوم والتصنيف العمري، وابدأ بما يناسبك.</p>
+<section id="features"><div class="w">
+ <h2>الإمكانات</h2><p class="sub">ما يعمل اليوم. وما نبنيه الآن في الأسفل بصراحة.</p>
  <div class="grid">
-  <div class="card"><h3>✍️ ما تصنعه أنت</h3><p>اكتب قوائمك وبرامجك المجدولة بخطواتها وأيامها، وأبقِها لك أو لعائلتك.</p></div>
-  <div class="card"><h3>👥 من الآخرين</h3><p>مكتبة مشتركة بعد مراجعة كل قائمة قبل نشرها. انسخ ما يعجبك وعدّله.</p></div>
-  <div class="card"><h3>🎓 من المتخصصين</h3><p>برامج أصيلة من مسار بتنويه واضح، مثل «من الصفر إلى 5 كم» و«21 يومًا لعادة القراءة».</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>مهام بقوائم خطوات</h3><p>مهمة واحدة بداخلها خطوات، وهدف عددي وتاريخ.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>برامج مجدولة</h3><p>تلتحق ببرنامج فتظهر جلساته بتواريخها في مهامك وتقويمك.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>عادات وسلاسل 🔥</h3><p>أيام تختارها، وسلسلة متتالية تبقيك مستمرًا.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>تقويم شهري</h3><p>مهام وعادات وتحديات في شاشة واحدة.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>قوائم أمنيات 🌠</h3><p>أحلام وتجارب تحققها وتحتفل بها.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>اكتشف بالوسوم</h3><p>بحث وتصنيف عمري ومحتوى رسمي وموثّق ومن المجتمع.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>إنجازاتي وأرقامي</h3><p>شارات وأرقام قياسية وجوائز تضعها لنفسك.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>ثبّته على جوالك</h3><p>يمكن تثبيته على شاشتك الرئيسية كتطبيق، بلا متجر.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><h3>مظهرك أنت</h3><p>فاتح أو ليلي، وخمسة ألوان.</p></div>
+ </div>
+ <h3 style="margin:26px 0 10px">🛠️ نبنيه الآن</h3>
+ <div class="chips"><span class="chip">وضع «الخطوة التالية»: شاشة واحدة بما تفعله الآن</span><span class="chip">تفريغ الدماغ: التقاط سريع تحوّله لمهام</span><span class="chip">تحديات الفرق: مجموع الفريق ضد فريق</span><span class="chip">شارتا «الخطوة الأولى» و«الرقم القياسي»</span><span class="chip">احتفال عند الإنجاز (اختياري)</span><span class="chip">مظاهر تُفتح بالمستوى</span><span class="chip">ناشرون متخصصون موثّقون</span><span class="chip">تذكيرات</span></div>
+ <p class="mini" style="margin-top:14px">البرامج الصحية والرياضية للكبار، ولا تغني عن استشارة الطبيب.</p>
+</div></section>
+
+<section id="badges"><div class="w">
+ <h2>شارات تحكي تقدّمك</h2><p class="sub">تُمنح من الخادم عند الإنجاز الفعلي، فلا تُزوَّر. وهذه طرق كسبها.</p>
+ <div class="badges">
+  <div class="card"><span class="tag on">متاح الآن</span><div class="m">🔥</div><h3>الاستمرارية</h3><p>سلسلة عادة متتالية: 7 و21 و40 و100 يوم.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><div class="m">🧩</div><h3>المهارات</h3><p>برونزية وفضية وذهبية في عشرة مجالات بحسب ما تنجز.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><div class="m">🎓</div><h3>إكمال برنامج</h3><p>تنهي كل جلسات برنامج فتنال شارته ونقاطًا إضافية.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><div class="m">🌠</div><h3>الأمنيات</h3><p>أول أمنية تحققها، ثم 5 و10 و25.</p></div>
+  <div class="card"><span class="tag on">متاح الآن</span><div class="m">🏁</div><h3>حملات الأسبوع</h3><p>تحقق هدف الحملة، وللكبار مراكز أولى 🥇🥈🥉.</p></div>
+  <div class="card"><span class="tag soon">قريبًا</span><div class="m">🏆</div><h3>الرقم القياسي</h3><p>حين تتجاوز أفضل ما أنجزتَه سابقًا في أي نشاط.</p></div>
+  <div class="card"><span class="tag soon">قريبًا</span><div class="m">🟢</div><h3>الخطوة الأولى</h3><p>حين تبدأ مهمة كبيرة بأول خطوة منها.</p></div>
  </div>
 </div></section>
 
-<section id="features"><div class="w">
- <h2>الإمكانات</h2><p class="sub">ما يعمل اليوم، وما نبنيه الآن. نوضّح الفرق بصراحة.</p>
- <div class="grid">
-  <div class="card"><span class="tag on">متاح الآن</span><h3>مهام بقوائم خطوات</h3><p>مهمة واحدة بداخلها خطوات تُعلَّم واحدة واحدة.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>برامج مجدولة</h3><p>تلتحق ببرنامج فتظهر جلساته في مهامك وتقويمك بتواريخها.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>عادات وسلاسل 🔥</h3><p>أيام تختارها، وسلسلة متتالية تبقيك مستمرًا.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>تقويم شهري</h3><p>مهام بتاريخ، وعادات، وتحديات في شاشة واحدة.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>اكتشف بالوسوم</h3><p>بحث وتصنيف عمري وناشرون موثّقون.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>تحديات بالنقاط أو بالعدد</h3><p>من يقرأ صفحات أكثر؟ ترتيب بين الأصدقاء.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>أصدقاء برابط</h3><p>أضف صديقًا برابط، وأي ابن يحتاج موافقة وليّ أمره.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>شارات مهارات ونقاط</h3><p>ثماني مهارات بثلاثة مستويات لكل منها.</p></div>
-  <div class="card"><span class="tag on">متاح الآن</span><h3>مظهرك أنت</h3><p>وضع فاتح أو داكن وخمسة ألوان.</p></div>
-  <div class="card"><span class="tag soon">قريبًا</span><h3>شارات وجوائز للبرامج والحملات</h3><p>شارة إكمال البرنامج، وحملات أسبوعية متجددة.</p></div>
-  <div class="card"><span class="tag soon">قريبًا</span><h3>ناشرون متخصصون</h3><p>مختصون موثّقون يرفعون برامجهم بعد المراجعة.</p></div>
-  <div class="card"><span class="tag soon">قريبًا</span><h3>تذكيرات</h3><p>إشعارات تذكّرك بعاداتك وجلساتك.</p></div>
+<section id="teams"><div class="w two">
+ <div>
+  <h2>تحديات الفرق والعائلات</h2>
+  <p class="sub">منافسة ودّية تقوّي الصلة بمن تحب، لا ساحات حرب.</p>
+  <ul class="k"><li>تحدٍّ بين أصدقائك وأقاربك بالنقاط أو بعدد المهام أو بالعدد (صفحات، دقائق…)</li><li>حملة جديدة كل أسبوع بهدف وشارة</li><li>عائلات تتنافس معًا بموافقة أولياء الأمور</li><li>تحديات الفرق (مجموع الفريق ضد فريق): قريبًا</li></ul>
  </div>
- <p class="mini" style="margin-top:14px">البرامج الصحية والرياضية للكبار، ولا تغني عن استشارة الطبيب.</p>
+ <div class="card"><h3>🤝 التزاماتنا</h3><ul class="k" style="margin-top:8px"><li>لا صناديق حظ ولا مكافآت عشوائية</li><li>لا دردشة بين المستخدمين</li><li>لا لوحات عامة تُظهر الأبناء</li><li>المحتوى الصحي للكبار وبتنويه واضح</li></ul></div>
 </div></section>
 
 <section class="band"><div class="w two">
  <div>
-  <h2>🛡️ حماية عائلية اختيارية</h2>
-  <p class="sub">حسابك شخصي أولًا. وإن كان لديك أبناء فعّل الحماية، فتُنشئ لهم حسابات وتبقى أنت القائد.</p>
-  <div class="chips"><span class="chip">حسابات أبناء بيوزر وكلمة مرور</span><span class="chip">اعتماد مهامهم</span><span class="chip">متجر جوائز عائلي</span><span class="chip">مساحة «بيت المغامرين»</span></div>
+  <h2>🛡️ وإن أردتَ إشراك عائلتك</h2>
+  <p class="sub">حسابك شخصي أولًا. فعّل الحماية العائلية في أي وقت، فتُنشئ حسابات لأبنائك وتبقى أنت القائد.</p>
+  <div class="chips"><span class="chip">حسابات أبناء بيوزر وكلمة مرور</span><span class="chip">اعتماد المهام</span><span class="chip">متجر جوائز عائلي</span><span class="chip">مساحة «بيت المغامرين»</span></div>
  </div>
- <div class="card">
-  <h3>الأمان في التصميم</h3>
-  <ul class="k"><li>التحاق الابن بأي برنامج يتم عبر وليّ أمره</li><li>تصنيف عمري يمنع المحتوى غير المناسب</li><li>لا دردشة ولا رسائل بين الأبناء</li><li>لا أصدقاء للابن إلا بموافقة وليّ أمره</li></ul>
- </div>
+ <div class="card"><h3>الأمان في التصميم</h3><ul class="k" style="margin-top:8px"><li>يطلب الابن البرنامج، ووليّ الأمر هو من يوافق</li><li>تصنيف عمري يمنع المحتوى غير المناسب</li><li>لا أصدقاء للابن إلا بموافقة وليّ أمره</li><li>أمر واحد يُوقف طلبات الأبناء</li></ul></div>
 </div></section>
 
 <section class="final"><div class="w">
  <div class="disp">خطواتك في مسار</div>
- <p class="lead">ابدأ خطوتك الأولى اليوم، وخذها خطوة بعد خطوة.</p>
+ <p class="lead">ابدأ بخطوة واحدة اليوم، وخذها خطوة بعد خطوة.</p>
  <a class="btn" data-app href="#">ابدأ مجانًا</a>
 </div></section>
 <footer>🧭 مسار • نسخة تجريبية قيد التطوير</footer>
@@ -120,21 +149,23 @@ a:focus-visible,button:focus-visible{outline:3px solid var(--sun);outline-offset
 <script>
 const APP="app/";
 document.querySelectorAll("a[data-app]").forEach(a=>a.href=APP);
+/* المظهر: تلقائي ← فاتح ← ليلي */
+const MODES=[["auto","🌓 تلقائي"],["light","☀️ فاتح"],["dark","🌙 ليلي"]];let mi=0;
+try{const s=localStorage.getItem("masar_land_theme");mi=Math.max(0,MODES.findIndex(m=>m[0]===s))}catch(e){}
+function applyMode(){const r=document.documentElement;MODES[mi][0]==="auto"?r.removeAttribute("data-theme"):r.setAttribute("data-theme",MODES[mi][0]);document.getElementById("tt").textContent=MODES[mi][1]}
+document.getElementById("tt").onclick=()=>{mi=(mi+1)%3;try{localStorage.setItem("masar_land_theme",MODES[mi][0])}catch(e){}applyMode()};applyMode();
+/* أمثلة بتبويبات */
+const EX=[["💼 عمل وإنتاجية",["تفريغ الدماغ السريع (10 دقائق)","صباح الخمس مهام الأساسية","إطلاق مشروعي الشخصي (برنامج 30 يومًا)","تجهيز عرض العمل بخطواته","ترتيب مكتبي وبريدي الوارد"]],["🔥 عادات وصحة",["21 يومًا لعادة القراءة","روتين إطالة صباحي","أسبوع بلا شاشات مسائية","شرب 8 أكواب ماء يوميًا","جلسة امتنان مسائية (3 أشياء)"]],["🌠 أمنيات ومغامرات",["زيارة 5 مدن تاريخية","تجربة رياضة لأول مرة","قراءة 50 كتابًا في سنة","العودة لهواية مهملة: رسم أو عزف","قضاء ليلة تحت النجوم"]],["🤝 علاقات وأسرة",["سهرة عائلية أسبوعية","تحدي المشي الأسبوعي مع الأهل","مساعدة الجيران أو عمل تطوعي","طبق جديد كل أسبوع","مكالمة لأحد أقاربك كل جمعة"]],["📚 تعلّم ومال",["أساسيات لغة جديدة بكلمات يومية","بناء أول صفحة ويب","مهارة الإلقاء أمام الجمهور","تسجيل المصروفات أسبوعًا كاملًا","خطة ادخار لهدف محدد"]]];
+const tabs=document.getElementById("extabs"),list=document.getElementById("exlist");
+function showEx(i){tabs.querySelectorAll("button").forEach((b,j)=>b.setAttribute("aria-selected",j===i));list.innerHTML=EX[i][1].map(x=>"<li>"+x+"</li>").join("")}
+EX.forEach((e,i)=>{const b=document.createElement("button");b.setAttribute("role","tab");b.textContent=e[0];b.onclick=()=>showEx(i);tabs.appendChild(b)});showEx(0);
+/* التجربة المصغّرة */
 const T=[["🏃","جلسة جري: إحماء 5 دقائق",5],["🏃","جري ومشي بالتناوب",10],["📚","اقرأ 10 دقائق",10],["🌙","أذكار الصباح",5]];
-const L=[[0,"🧭 مبتدئ"],[15,"⛺ متقدّم"],[30,"🏅 قائد"]];
-let done=new Set();
-function draw(){
- const xp=[...done].reduce((a,i)=>a+T[i][2],0),max=30;let l=L[0][1];L.forEach(x=>{if(xp>=x[0])l=x[1]});
- document.getElementById("lv").textContent=l;document.getElementById("xp").textContent=xp+" نقطة";
- document.getElementById("pb").style.width=Math.min(100,xp/max*100)+"%";
- document.getElementById("tl").innerHTML=T.map((t,i)=>`<button class="t ${done.has(i)?"d":""}" onclick="tap(${i})"><span class="c">${done.has(i)?"✓":""}</span><span>${t[0]} ${t[1]}</span><b>+${t[2]}</b></button>`).join("");
-}
-function tap(i){
- const m=document.getElementById("msg");
- if(done.has(i)){done.delete(i);m.textContent="أُعيدت الخطوة";}else{done.add(i);
-  m.textContent=done.size===T.length?"🎉 أنجزتَ كل خطواتك اليوم! أنت الآن قائد":"أحسنت! +"+T[i][2]+" نقطة";}
- draw();
-}
+const L=[[0,"🧭 مبتدئ"],[15,"⛺ متقدّم"],[30,"🏅 قائد"]];let done=new Set();
+function draw(){const xp=[...done].reduce((a,i)=>a+T[i][2],0);let l=L[0][1];L.forEach(x=>{if(xp>=x[0])l=x[1]});
+ document.getElementById("lv").textContent=l;document.getElementById("xp").textContent=xp+" نقطة";document.getElementById("pb").style.width=Math.min(100,xp/30*100)+"%";
+ document.getElementById("tl").innerHTML=T.map((t,i)=>'<button class="t '+(done.has(i)?"d":"")+'" onclick="tap('+i+')"><span class="c">'+(done.has(i)?"✓":"")+'</span><span>'+t[0]+" "+t[1]+"</span><b>+"+t[2]+"</b></button>").join("")}
+function tap(i){const m=document.getElementById("msg");if(done.has(i)){done.delete(i);m.textContent="أُعيدت الخطوة"}else{done.add(i);m.textContent=done.size===T.length?"🎉 أنجزتَ كل خطواتك اليوم! أنت الآن قائد":"أحسنت! +"+T[i][2]+" نقطة"}draw()}
 draw();
 </script>
 </body>
